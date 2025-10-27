@@ -95,10 +95,20 @@
       background: #e0a800;
     }
 
+    .mensaje-bienvenida {
+      text-align: center;
+      color: #111;
+      font-size: 1.23em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-top: 32px;
+      margin-bottom: 8px;
+    }
+
     .reloj-vivo {
       text-align: center;
-      margin-top: 30px;
-      padding: 20px;
+      margin-top: 24px;
+      padding: 16px;
       background: #f0f0f0;
       border-radius: 8px;
       font-size: 1.2em;
@@ -316,6 +326,10 @@
     <button class="btn btn-comparar" onclick="compararDias()">COMPARAR REGISTROS</button>
     <button class="btn btn-historial" onclick="mostrarHistorial()">HISTORIAL</button>
 
+    <div class="mensaje-bienvenida">
+      BIENVENIDO/A A MI PROYECTO
+    </div>
+
     <div class="reloj-vivo">
       <div class="hora" id="hora">00:00:00</div>
       <div class="fecha" id="fecha">Cargando fecha...</div>
@@ -355,52 +369,38 @@
     // RELOJ EN VIVO
     function actualizarReloj() {
       const ahora = new Date();
-      
-      // Hora con formato HH:MM:SS
       const horas = String(ahora.getHours()).padStart(2, '0');
       const minutos = String(ahora.getMinutes()).padStart(2, '0');
       const segundos = String(ahora.getSeconds()).padStart(2, '0');
       document.getElementById('hora').innerText = `${horas}:${minutos}:${segundos}`;
-      
-      // Fecha completa en español
       const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       const fechaFormato = ahora.toLocaleDateString('es-CL', opciones);
       document.getElementById('fecha').innerText = fechaFormato;
     }
-    
-    // Actualizar reloj cada segundo
     setInterval(actualizarReloj, 1000);
-    actualizarReloj(); // Primera actualización inmediata
+    actualizarReloj();
 
     function cargarHistorial() {
       const guardado = localStorage.getItem('umbersHistorial');
       historial = guardado ? JSON.parse(guardado) : [];
     }
-
     function guardarHistorial() {
       localStorage.setItem('umbersHistorial', JSON.stringify(historial));
     }
-
     function ocultarTodo() {
       document.getElementById('resultado').style.display = 'none';
       document.getElementById('comparativa').style.display = 'none';
       document.getElementById('historial').style.display = 'none';
       document.getElementById('formulario').style.display = 'none';
     }
-
     function guardarYOrdenar() {
       const ids = ['antonio','constanza','karelis','sandra','frank','ignacio','roberto'];
-      const datos = ids.map(id => ({ 
-        nombre: id.toUpperCase(), 
-        valor: document.getElementById(id).value 
-      }));
+      const datos = ids.map(id => ({ nombre: id.toUpperCase(), valor: document.getElementById(id).value }));
       const datosValidos = datos.filter(d => d.valor.trim() && !isNaN(parseFloat(d.valor)));
-      
       if (!datosValidos.length) {
         alert('Por favor, ingresa valores numéricos.');
         return;
       }
-
       cargarHistorial();
       const fecha = new Date();
       const registro = {
@@ -412,34 +412,27 @@
       };
       historial.push(registro);
       guardarHistorial();
-
       datosValidos.sort((a, b) => b.valor - a.valor);
       document.getElementById('lista-ordenada').innerHTML = datosValidos.map(d => 
         `<div class="resultado-item"><strong>${d.nombre}:</strong> ${formatearCLP(d.valor)}</div>`
       ).join('');
       document.getElementById('fechaHoraResultado').innerText = registro.formato;
-      
       ocultarTodo();
       document.getElementById('resultado').style.display = 'block';
     }
-
     function compararDias() {
       cargarHistorial();
       if (historial.length < 2) {
         alert('Se necesitan al menos 2 registros para comparar.');
         return;
       }
-
       const ultimo = historial[historial.length - 1];
       const anterior = historial[historial.length - 2];
-      
       let html = `<div class="fecha-hora"><strong>Comparando:</strong><br>${anterior.formato}<br>vs<br>${ultimo.formato}</div>`;
-      
       const comparacion = ['ANTONIO','CONSTANZA','KARELIS','SANDRA','FRANK','IGNACIO','ROBERTO'].map(n => {
         const v1 = anterior.datos.find(d => d.nombre === n)?.valor || 0;
         const v2 = ultimo.datos.find(d => d.nombre === n)?.valor || 0;
         let clase = 'igual', texto = 'Sin cambio';
-        
         if (v2 > v1) {
           clase = 'positiva';
           texto = `+${formatearCLP(v2 - v1)}`;
@@ -447,41 +440,34 @@
           clase = 'negativa';
           texto = `-${formatearCLP(v1 - v2)}`;
         }
-        
         return { nombre: n, v1, v2, clase, texto };
       }).sort((a, b) => b.v2 - a.v2);
-
       comparacion.forEach(item => {
         html += `<div class="comparativa-item">
           <strong>${item.nombre}:</strong> ${formatearCLP(item.v1)} → ${formatearCLP(item.v2)}
           <div class="diferencia ${item.clase}">${item.texto}</div>
         </div>`;
       });
-
       document.getElementById('listaComparativa').innerHTML = html;
       ocultarTodo();
       document.getElementById('comparativa').style.display = 'block';
     }
-
     function mostrarHistorial() {
       cargarHistorial();
       if (!historial.length) {
         alert('No hay registros guardados.');
         return;
       }
-
       const agrupado = {};
       historial.forEach(r => {
         const clave = `${r.año}-${r.mes}`;
         if (!agrupado[clave]) agrupado[clave] = [];
         agrupado[clave].push(r);
       });
-
       let html = '';
       Object.keys(agrupado).forEach(clave => {
         html += `<button class="collapsible">${clave.replace('-', ' ')}</button>
                  <div class="content">`;
-        
         agrupado[clave].forEach(reg => {
           const datosOrdenados = [...reg.datos].sort((a, b) => b.valor - a.valor);
           html += `<div class="registro">
@@ -489,12 +475,9 @@
             ${datosOrdenados.map(d => `${d.nombre}: ${formatearCLP(d.valor)}`).join('<br>')}
           </div>`;
         });
-        
         html += '</div>';
       });
-
       document.getElementById('historial-lista').innerHTML = html;
-
       document.querySelectorAll('.collapsible').forEach(btn => {
         btn.onclick = function() {
           this.classList.toggle('active');
@@ -502,11 +485,9 @@
           content.style.display = content.style.display === 'block' ? 'none' : 'block';
         };
       });
-
       ocultarTodo();
       document.getElementById('historial').style.display = 'block';
     }
-
     function resetHistorial() {
       if (confirm('¿Seguro que quieres eliminar todos los registros? Esta acción no se puede deshacer.')) {
         localStorage.removeItem('umbersHistorial');
@@ -514,13 +495,11 @@
         document.getElementById('historial-lista').innerHTML = '<p style="text-align:center;padding:20px;"><strong>Todos los registros fueron eliminados.</strong></p>';
       }
     }
-
     function volverAlFormulario() {
       document.querySelectorAll('input[type=number]').forEach(i => i.value = '');
       ocultarTodo();
       document.getElementById('formulario').style.display = 'block';
     }
-
     cargarHistorial();
   </script>
 </body>
