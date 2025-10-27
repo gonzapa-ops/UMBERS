@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>UMBERS - SISTEMA COMPLETO</title>
+  <title>UMBERS</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -314,7 +314,7 @@
     </div>
 
     <button class="btn btn-guardar" onclick="guardarYOrdenar()">GUARDAR</button>
-    <button class="btn btn-comparar" onclick="compararDias()">COMPARAR DÍAS</button>
+    <button class="btn btn-comparar" onclick="compararDias()">COMPARAR REGISTROS</button>
     <button class="btn btn-historial" onclick="mostrarHistorial()">HISTORIAL</button>
 
     <div class="reloj-vivo">
@@ -331,7 +331,7 @@
   </div>
 
   <div class="comparativa" id="comparativa">
-    <h2>COMPARATIVA ENTRE DOS DÍAS</h2>
+    <h2>COMPARATIVA ENTRE DOS REGISTROS</h2>
     <div id="listaComparativa"></div>
     <button class="boton-volver" onclick="volverAlFormulario()">VOLVER</button>
   </div>
@@ -344,7 +344,7 @@
   </div>
 
   <div class="footer">
-    WEB Y DESARROLLO DE CÓDIGO POR ANTONIO GONZALES
+    WEB Y DESARROLLO DE CÓDIGO POR ANTONIO 😎
   </div>
 
   <script>
